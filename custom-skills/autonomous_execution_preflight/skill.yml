@@ -1,0 +1,5 @@
+name: autonomous_execution_preflight
+title: Preflight Autonomous Timed Execution
+description: Verify login, execution route and timing capability before promising autonomous timed work, and report the gap plainly when a check fails.
+category: Work and knowledge
+include_in_prompt: false
