@@ -1,0 +1,5 @@
+name: execution_verification_before_retry
+title: Verify an execution before retrying it
+description: Verify an uncertain execution from its authoritative record before retrying it, so a completed action is never issued twice.
+category: Work and knowledge
+include_in_prompt: false
