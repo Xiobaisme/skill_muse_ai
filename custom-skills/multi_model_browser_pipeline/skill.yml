@@ -1,0 +1,5 @@
+name: multi_model_browser_pipeline
+title: Multi Model Browser Pipeline
+description: Consult ChatGPT, Claude and Gemini in order through their browser chats to validate an already-found bug, then combine the findings and execute the plan.
+category: Work and knowledge
+include_in_prompt: false
