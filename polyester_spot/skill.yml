@@ -1,0 +1,5 @@
+name: polyester_spot
+title: Polyester Spot Trader (TESTNET ONLY)
+description: Trading spot di Polyester testnet lewat REST API dengan batas ukuran order dan jumlah order harian, khusus testnet.
+category: Work and knowledge
+include_in_prompt: false
