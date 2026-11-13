@@ -1,34 +1,37 @@
 ---
-name: autonomous-execution-preflight
-description: Use when an autonomous agent submits trades, orders, or other actions that can spend funds and a submission returns unknown, pending, or timed out. Verifies the result before retrying so the same action is never executed twice.
+name: preflight-autonomous-timed-execution
+description: Use before promising any autonomous action that must run inside a specific time window (claims, mints, scheduled trades). Verifies login, the execution route, and timing end to end first, and reports gaps with a working fallback instead of promising a window that has not been proven.
 ---
 
-# Verify an execution before retrying it
+# Preflight Autonomous Timed Execution
 
-## Treat unknown as unverified
+## Verify the login first
 
-- Treat an unknown, pending, or timed out submission as unverified rather than failed.
-- Hold the next submission for the same economic action until verification finishes or its retry budget ends.
-- Keep the submission identifier and the requested amount or quantity with the unverified record so verification can find it later.
+- Verify the login through the exact sign in path the service uses before you promise any timed work.
+- Treat a supplied token or credential as unproven until a live read returns data for the account that will act.
+- Treat a wallet sign in as unproven until the wallet is connected and the signature step has completed for that account.
+- Check each account separately when more than one account must act and record which accounts passed and which did not.
 
-## Verify from the authoritative record
+## Prove the execution route end to end
 
-- Check the authoritative history by submission identifier first and use the recorded fill quantity and amount when history confirms a fill.
-- Check the balance change next when history lookup fails or returns no identifier. Use a matching balance change as confirmation only when it matches the requested action in asset and size.
-- Repeat the history and balance checks with a short wait between attempts instead of issuing a second submission after one failed lookup.
+- Send a harmless end to end test through the exact route the timed action will use before you promise the action.
+- Treat a successful read as proof of reading only and never as proof that a write or submission will work.
+- Test the exact write method the action needs and record its response or its failure.
+- Test from the same environment that will run the timed work and test again when that environment changes.
 
-## Retry verification before retrying the action
+## Prove the timing path
 
-- Retry verification several times across transient errors before deciding that a submission failed.
-- Stop retrying the same action when repeated attempts return a shortage error after a fill was already confirmed or a balance change already shows the action completed.
-- Shrink or pause the next action when the current balance cannot support it, instead of repeating the full original action until a stop limit ends the run.
-- Record a submission as filled from history even when the local log first counted it as failed, and correct the running total from that history record.
+- Confirm the scheduled run can start inside the window the action needs before you promise an exact hour.
+- Treat a test that runs late as a timing failure and say so instead of treating its later success as proof the window works.
+- Keep a live check running only after the route and timing checks have passed and stop it when the work is cancelled.
+- Record each window with the time it ran, the accounts it covered and the evidence for each result.
 
-## Reconcile and report
+## Report the gap and offer the working route
 
-- Reconcile the local log against history and balances before reporting a total, a stop reason, or a remaining amount.
-- Report the verified total, the unverified items still open, and the evidence used for each filled item instead of reporting only the local log total.
-- Name the next safe step when verification remains inconclusive and ask the user before issuing a duplicate action that could spend twice.
+- Tell the user plainly which check failed and what it blocks before the window passes.
+- Present setup progress as setup progress only and never as a successful execution.
+- Name the route that can still work, such as the user acting from a device where the login already works, and say what the user must do there.
+- Stop promising the next window until the failed check passes and ask the user before you keep retrying a route that has failed the same way.
 
 ## Available connectors
 
@@ -37,6 +40,6 @@ description: Use when an autonomous agent submits trades, orders, or other actio
 
 ## Alternatives for better results
 
-- Use a unique client identifier for each submission when the service supports one, so a later history lookup can find the exact submission.
-- Use a smaller test submission first when a new execution path is untested, and verify its fill before running a larger sequence.
-- Pause the sequence and verify all open submissions when transient errors cluster, instead of letting each failure add another duplicate attempt.
+- Ask the user to complete the login once on their own device when the agent cannot sign in for them and then verify the login from that completed session.
+- Break a long autonomous run into one verified window first and extend it only after that window succeeds with evidence.
+- Use a manual fallback with a clear deadline when the automated route fails so the window is not lost while the route is repaired.
