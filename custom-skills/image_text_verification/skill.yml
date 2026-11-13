@@ -1,0 +1,5 @@
+name: image_text_verification
+title: Verify Generated Image Text
+description: Verify the text in AI-generated images against the approved headline and line rules before delivery, and regenerate until it matches.
+category: Work and knowledge
+include_in_prompt: false
